@@ -36,11 +36,11 @@ jobs:
           node-version: 16
       - name: Install Dependencies
         run: npm ci
-      - name: Generate list.json
+      - name: Generate data.json
         uses: actions/github-script@v6
         with:
           script: |
-            const { default: spider } = await import('./.github/workflows/spider.js');
+            const { default: spider } = await import('${{ github.workspace }}/.github/workflows/spider.js');
             await spider({ github, context, core });
       - name: Remove node_modules
         run: rm -rf node_modules
