@@ -65,7 +65,7 @@ async function get() {
     return data;
 }
 
-module.exports = async ({ github, context, core }) => {
+export default async function spider({ github, context, core }) {
     get()
       .then(data => fs.writeFile("data.json", JSON.stringify(data)))
       .then(() => console.log("done"))

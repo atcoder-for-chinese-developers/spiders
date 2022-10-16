@@ -2,10 +2,6 @@
   "name": "spiders",
   "version": "1.0.0",
   "description": "Spiders for atcoder-for-chinese",
-  "main": "index.js",
-  "scripts": {
-    "start": "node ."
-  },
   "author": "",
   "license": "MIT",
   "dependencies": {

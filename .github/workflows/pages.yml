@@ -40,7 +40,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const spider = require('./.github/workflows/spider.js');
+            const { default: spider } = await import('./.github/workflows/spider.js');
             await spider({ github, context, core });
       - name: Remove node_modules
         run: rm -rf node_modules
