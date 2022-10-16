@@ -12,7 +12,7 @@ async function resolveContests() {
     for (const i in data) {
         const contest = data[i];
         contests[contest.id] = contest;
-        contests[contest.id].problems = [];
+        contests[contest.id].problems = {};
     }
     return contests;
 }
@@ -42,7 +42,7 @@ async function mergeData(contests, problems) {
     let merged = contests;
     for (const id in problems) {
         const problem = problems[id];
-        merged[problem.contest_id].problems.push(problem);
+        merged[problem.contest_id].problems[id] = problem;
     }
     return merged;
 }
@@ -53,19 +53,21 @@ async function get() {
     problems = await resolveDifficulties(problems);
     contests = await mergeData(contests, problems);
     let data = {};
-    data.abc = [], data.arc = [], data.agc = [], data.ahc = [], data.others = [];
+    data.abc = {}, data.arc = {}, data.agc = {}, data.ahc = {}, data.others = {};
     for (const id in contests) {
         const contest = contests[id];
-        if (id.slice(0, 3) === "abc") data.abc.push(contest);
-        else if (id.slice(0, 3) === "arc") data.arc.push(contest);
-        else if (id.slice(0, 3) === "agc") data.agc.push(contest);
-        else if (id.slice(0, 3) === "ahc") data.ahc.push(contest);
-        else data.others.push(contest);
+        if (id.slice(0, 3) === "abc") data.abc[id] = contest;
+        else if (id.slice(0, 3) === "arc") data.arc[id] = contest;
+        else if (id.slice(0, 3) === "agc") data.agc[id] = contest;
+        else if (id.slice(0, 3) === "ahc") data.ahc[id] = contest;
+        else data.others[id] = contest;
     }
     return data;
 }
 
-get()
-  .then(data => fs.writeFile("data.json", JSON.stringify(data)))
-  .then(() => console.log("done"))
-  .catch(e => console.log(e));
+module.exports = async ({ github, context, core }) => {
+    get()
+      .then(data => fs.writeFile("data.json", JSON.stringify(data)))
+      .then(() => console.log("done"))
+      .catch(e => console.log(e));
+}
