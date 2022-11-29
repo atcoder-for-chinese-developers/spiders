@@ -40,9 +40,12 @@ async function resolveDifficulties(problems) {
 
 async function mergeData(contests, problems) {
     let merged = contests;
-    for (const id in problems) {
-        const problem = problems[id];
-        merged[problem.contest_id].problems[id] = problem;
+    const data = await getObject("https://kenkoooo.com/atcoder/resources/contest-problem.json");
+    for (const id in data) {
+        const cur = data[id];
+        let prb = problems[cur.problem_id];
+        prb.problem_index = cur.problem_index;
+        merge[cur.contest_id] = prb;
     }
     return merged;
 }
