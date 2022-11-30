@@ -44,8 +44,10 @@ async function mergeData(contests, problems) {
     for (const id in data) {
         const cur = data[id];
         let prb = problems[cur.problem_id];
+        if (prb == undefined)
+            continue;
         prb.problem_index = cur.problem_index;
-        merged[cur.contest_id] = prb;
+        merged[cur.contest_id].problems[cur.problem_id] = prb;
     }
     return merged;
 }
