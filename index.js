@@ -62,10 +62,10 @@ async function mergeData(contests, problems) {
         const cur = data[id];
         let prb = problems[cur.problem_id];
         if (prb == undefined) {
-            console.log("problem '" + cur.problem_id + "' belongs to contest '" + cur.contest_id + "' not found.");
+            console.log("Problem '" + cur.problem_id + "' belongs to contest '" + cur.contest_id + "' not found.");
             continue;
         }
-        merged[cur.contest_id].problems[cur.problem_id] = prb;
+        merged[cur.contest_id].problems[cur.problem_id] = Object.assign({}, prb);
         merged[cur.contest_id].problems[cur.problem_id].problem_index = cur.problem_index;
     }
     return merged;
