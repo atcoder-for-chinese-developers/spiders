@@ -7,6 +7,7 @@
 - https://kenkoooo.com/atcoder/resources/contests.json
 - https://kenkoooo.com/atcoder/resources/problems.json
 - https://kenkoooo.com/atcoder/resources/problem-models.json
+- https://kenkoooo.com/atcoder/resources/contest-problem.json
 
 ## 使用方法
 
