@@ -1,5 +1,22 @@
 import fetch from "node-fetch";
-import { promises as fs } from "fs";
+import fs from "fs";
+
+function deleteDirectory(path) {
+	if (fs.existsSync(path)) {
+		let list = fs.readdirSync(path);
+		list.forEach(file => {
+			let filePath = path + '/' + file;
+			if (fs.statSync(filePath).isFile()) fs.unlinkSync(filePath);
+			else deleteDirectory(filePath);
+		});
+		fs.rmdirSync(path);
+	}
+}
+
+function makeDist() {
+	deleteDirectory('dist');
+	fs.mkdirSync('dist');
+}
 
 async function getObject(url) {
     const response = await fetch(url);
@@ -72,9 +89,9 @@ async function get() {
     return data;
 }
 
-export default async function spider({ github, context, core }) {
-    get()
-      .then(data => fs.writeFile("data.json", JSON.stringify(data)))
-      .then(() => console.log("done"))
-      .catch(e => console.log(e));
-}
+makeDist();
+
+get()
+    .then(data => fs.promises.writeFile("dist/data.json", JSON.stringify(data)))
+    .then(() => console.log("done"))
+    .catch(e => console.log(e));
