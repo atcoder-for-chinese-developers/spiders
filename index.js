@@ -76,15 +76,35 @@ async function get() {
     let problems = await resolveProblems();
     problems = await resolveDifficulties(problems);
     contests = await mergeData(contests, problems);
-    let data = {};
-    data.abc = {}, data.arc = {}, data.agc = {}, data.ahc = {}, data.others = {};
+    let data = {
+        abc: {},
+        arc: {},
+        agc: {},
+        ahc: {},
+        abc_like: {},
+	arc_like: {},
+	agc_like: {},
+        others: {}
+    };
     for (const id in contests) {
         const contest = contests[id];
         if (id.slice(0, 3) === "abc") data.abc[id] = contest;
         else if (id.slice(0, 3) === "arc") data.arc[id] = contest;
         else if (id.slice(0, 3) === "agc") data.agc[id] = contest;
         else if (id.slice(0, 3) === "ahc") data.ahc[id] = contest;
-        else data.others[id] = contest;
+	else {
+            try {
+                let ratedRange = contest.rate_change, rightRange = ratedRange.split("~")[1];
+                if (rightRange == " " || ratedRange == "All") rightRange = "9999";
+                if (rightRange < 2000) data.abc_like[id] = contest;
+                else if (rightRange < 2800) data.arc_like[id] = contest;
+                else if (rightRange != undefined) data.agc_like[id] = contest;
+                else data.others[id] = contest;
+	    } catch {
+                 console.log("Failed to filter " + id + " failed.");
+                 data.others[id] = contest;
+	    }
+	}
     }
     return data;
 }
