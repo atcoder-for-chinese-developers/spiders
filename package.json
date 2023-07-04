@@ -3,11 +3,13 @@
   "version": "1.0.0",
   "description": "Spiders for atcoder-for-chinese",
   "scripts": {
-    "start": "node index.js"
+    "build": "bash build.sh",
+    "build:cloudflare-pages": "env-cmd -f .env.cloudflare-pages bash build.sh"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "env-cmd": "^10.1.0",
     "node-fetch": "^3.2.10"
   },
   "type": "module"
