@@ -22,7 +22,7 @@ async function resolveContests(): Promise<Data> {
     const contests = await getObject("https://kenkoooo.com/atcoder/resources/contests.json") as NativeContest[];
     for (const i in contests) {
         const contest = contests[i], id = contest.id;
-        data.contests[id] = { title: contest.title, problems: {} } as Contest;
+        data.contests[id] = { title: contest.title, problems: {}, link: "https://atcoder.jp/contests/" + contest.id } as Contest;
         let prefix = id.slice(0, 3);
         if (prefix === "abc" || prefix === "arc" || prefix === "agc" || prefix === "ahc") data.categories[prefix].contests.push(id);
     	else {
@@ -48,7 +48,7 @@ async function resolveProblems(): Promise<ProblemSet> {
     const data = await getObject("https://kenkoooo.com/atcoder/resources/problems.json") as NativeProblem[];
     for (const i in data) {
         const problem = data[i];
-        problems[problem.id] = { index: problem.problem_index, title: problem.name, difficulty: null };
+        problems[problem.id] = { index: problem.problem_index, title: problem.name, link: null, difficulty: null };
     }
     return problems;
 }
@@ -113,6 +113,7 @@ async function mergeData(data: Data, problems: ProblemSet): Promise<Data> {
         }
         data.contests[cur.contest_id].problems[cur.problem_id] = Object.assign({}, problem);
         data.contests[cur.contest_id].problems[cur.problem_id].index = cur.problem_index;
+        data.contests[cur.contest_id].problems[cur.problem_id].link = "https://atcoder.jp/contests/" + cur.contest_id + "/tasks/" + cur.problem_id;
     }
     return data;
 }

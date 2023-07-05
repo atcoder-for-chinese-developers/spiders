@@ -9,6 +9,7 @@ declare type Difficulty = {
 declare type Problem = {
     index: string,
     title: string,
+    link: string | null,
     difficulty: Difficulty | null
 };
 declare type ProblemSet = {
@@ -17,6 +18,7 @@ declare type ProblemSet = {
 
 declare type Contest = {
     title: string,
+    link: string | null,
     problems: ProblemSet
 };
 declare type ContestSet = {
