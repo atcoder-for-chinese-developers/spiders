@@ -6,14 +6,23 @@ async function getObject(url: string) {
 }
 
 async function resolveContests(): Promise<Data> {
+    function getIndexes(indexes: string[]) {
+        let obj = {} as {[name: string]: string};
+        for (const name of indexes) {
+            const regex = name;
+            regex.replace(/\//g, '|');
+            obj[name] = `(${regex})\\d\*`;
+        }
+        return obj;
+    }
     let data = {
         categories: {
-            abc: { title: "ABC", color: "#00f", contests: [] },
-            arc: { title: "ARC", color: "#ff8000", contests: [] },
-            agc: { title: "AGC", color: "#ff1818", contests: [] },
-            abc_like: { title: "ABC Like", color: "#00f", contests: [] },
-            arc_like: { title: "ARC Like", color: "#ff8000", contests: [] },
-            agc_like: { title: "AGC Like", color: "#ff1818", contests: [] },
+            abc: { title: "ABC", color: "#00f", contests: [], indexes: getIndexes(["A", "B", "C", "D", "E", "F", "G", "H/Ex"]) },
+            arc: { title: "ARC", color: "#ff8000", contests: [], indexes: getIndexes(["A", "B", "C", "D", "E", "F"]) },
+            agc: { title: "AGC", color: "#ff1818", contests: [], indexes: getIndexes(["A", "B", "C", "D", "E", "F"]) },
+            abc_like: { title: "ABC Like", color: "#00f", contests: [], indexes: getIndexes(["A", "B", "C", "D", "E", "F", "G", "H/Ex"]) },
+            arc_like: { title: "ARC Like", color: "#ff8000", contests: [], indexes: getIndexes(["A", "B", "C", "D", "E", "F"]) },
+            agc_like: { title: "AGC Like", color: "#ff1818", contests: [], indexes: getIndexes(["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]) },
             ahc: { title: "AHC", color: "#181818", contests: [] },
             others: { title: "其他", color: "#181818", contests: [] }
         },

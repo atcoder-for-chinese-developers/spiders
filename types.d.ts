@@ -28,7 +28,8 @@ type ContestSet = {
 type Category = {
     title: string,
     color: string,
-    contests: string[]
+    contests: string[],
+    indexes?: {[name: string]: string}
 };
 type CategorySet = {
     [id: string]: Category
