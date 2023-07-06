@@ -1,4 +1,4 @@
-declare type Difficulty = {
+type Difficulty = {
     type: 'normal' | 'medal',
     color: string,
     textColor: string,
@@ -6,39 +6,44 @@ declare type Difficulty = {
     value: number
 };
 
-declare type Problem = {
+type Problem = {
     index: string,
     title: string,
     link: string | null,
     difficulty: Difficulty | null
 };
-declare type ProblemSet = {
+type ProblemSet = {
     [id: string]: Problem
 };
 
-declare type Contest = {
+type Contest = {
     title: string,
     link: string | null,
     problems: ProblemSet
 };
-declare type ContestSet = {
+type ContestSet = {
     [id: string]: Contest
 };
 
-declare type Category = {
+type Category = {
     title: string,
     color: string,
     contests: string[]
 };
-declare type CategorySet = {
+type CategorySet = {
     [id: string]: Category
 };
 
-declare type Data = {
+type Data = {
     categories: CategorySet,
     contests: ContestSet
 };
 
-declare type Modules = {
+type Modules = {
     [id: string]: any
 };
+
+type Info = {
+    title: string,
+    icon: string
+}

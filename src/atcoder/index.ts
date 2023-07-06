@@ -29,11 +29,11 @@ async function resolveContests(): Promise<Data> {
             try {
                 let ratedRange = contest.rate_change, rightRangeStr = ratedRange.split("~")[1];
                 if (rightRangeStr == " " || ratedRange == "All") rightRangeStr = "9999";
+                if (!rightRangeStr) data.categories.others.contests.push(id);
                 let rightRange = parseInt(rightRangeStr);
                 if (rightRange < 2000) data.categories.abc_like.contests.push(id);
                 else if (rightRange < 2800) data.categories.arc_like.contests.push(id);
-                else if (rightRange != undefined) data.categories.agc_like.contests.push(id);
-                else data.categories.others.contests.push(id);
+                else data.categories.agc_like.contests.push(id);
 	        } catch {
                  console.log("Failed to filter " + id + " failed.");
                  data.categories.others.contests.push(id);
@@ -125,3 +125,9 @@ export async function getData(): Promise<Data> {
     return await mergeData(data, problems);
 }
 
+export async function getInfo(): Promise<Info> {
+    return {
+        title: 'Atcoder',
+        icon: 'https://img.atcoder.jp/assets/logo.png'
+    };
+}

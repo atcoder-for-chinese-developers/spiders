@@ -19,7 +19,7 @@ function makeDist() {
 }
 
 async function build() {
-    let siteList = [];
+    let siteList = {} as {[id: string]: Info};
     for (let site in modules) {
         console.log('Processing site %s...', site);
         try {
@@ -27,7 +27,7 @@ async function build() {
             let data = await siteModule.getData();
             fs.mkdirSync('dist/' + site);
             fs.writeFileSync('dist/' + site + '/data.json', JSON.stringify(data));
-            siteList.push(site);
+            siteList[site] = await siteModule.getInfo();
         } catch (e) {
             console.log(e);
         } finally {
