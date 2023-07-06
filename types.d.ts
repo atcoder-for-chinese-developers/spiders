@@ -45,5 +45,6 @@ type Modules = {
 
 type Info = {
     title: string,
-    icon: string
+    icon: string,
+    link: string
 }

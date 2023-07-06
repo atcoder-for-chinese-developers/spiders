@@ -128,6 +128,7 @@ export async function getData(): Promise<Data> {
 export async function getInfo(): Promise<Info> {
     return {
         title: 'Atcoder',
-        icon: 'https://img.atcoder.jp/assets/logo.png'
+        icon: 'https://img.atcoder.jp/assets/logo.png',
+        link: 'https://atcoder.jp/'
     };
 }
