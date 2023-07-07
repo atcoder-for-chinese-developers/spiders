@@ -1,4 +1,5 @@
 import fetch from "node-fetch";
+import { CatchClause } from "typescript";
 
 async function getObject(url: string) {
     const response = await fetch(url);
@@ -15,51 +16,54 @@ async function resolveContests(): Promise<Data> {
         }
         return obj;
     }
+    let categories = {
+        abc: { id: "abc", title: "ABC", color: "#00f", contests: [], indexes: getIndexes(["A", "B", "C", "D", "E", "F", "G", "H/Ex"]) },
+        arc: { id: "arc", title: "ARC", color: "#ff8000", contests: [], indexes: getIndexes(["A", "B", "C", "D", "E", "F"]) },
+        agc: { id: "agc", title: "AGC", color: "#ff1818", contests: [], indexes: getIndexes(["A", "B", "C", "D", "E", "F"]) },
+        abc_like: { id: "abc_like", title: "ABC Like", color: "#00f", contests: [], indexes: getIndexes(["A", "B", "C", "D", "E", "F", "G", "H/Ex"]) },
+        arc_like: { id: "arc_like", title: "ARC Like", color: "#ff8000", contests: [], indexes: getIndexes(["A", "B", "C", "D", "E", "F"]) },
+        agc_like: { id: "agc_like", title: "AGC Like", color: "#ff1818", contests: [], indexes: getIndexes(["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]) },
+        ahc: { id: "ahc", title: "AHC", color: "#181818", contests: [] },
+        others: { id: "others", title: "其他", color: "#181818", contests: [] }
+    } as {[id: string]: Category};
     let data = {
-        categories: {
-            abc: { title: "ABC", color: "#00f", contests: [], indexes: getIndexes(["A", "B", "C", "D", "E", "F", "G", "H/Ex"]) },
-            arc: { title: "ARC", color: "#ff8000", contests: [], indexes: getIndexes(["A", "B", "C", "D", "E", "F"]) },
-            agc: { title: "AGC", color: "#ff1818", contests: [], indexes: getIndexes(["A", "B", "C", "D", "E", "F"]) },
-            abc_like: { title: "ABC Like", color: "#00f", contests: [], indexes: getIndexes(["A", "B", "C", "D", "E", "F", "G", "H/Ex"]) },
-            arc_like: { title: "ARC Like", color: "#ff8000", contests: [], indexes: getIndexes(["A", "B", "C", "D", "E", "F"]) },
-            agc_like: { title: "AGC Like", color: "#ff1818", contests: [], indexes: getIndexes(["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]) },
-            ahc: { title: "AHC", color: "#181818", contests: [] },
-            others: { title: "其他", color: "#181818", contests: [] }
-        },
-        contests: {}
+        categories: [],
+        contests: [],
+        problems: []
     } as Data;
     const contests = await getObject("https://kenkoooo.com/atcoder/resources/contests.json") as NativeContest[];
     for (const i in contests) {
         const contest = contests[i], id = contest.id;
-        data.contests[id] = { title: contest.title, problems: {}, link: "https://atcoder.jp/contests/" + contest.id } as Contest;
+        data.contests.push({ id: id, title: contest.title, problems: [], link: "https://atcoder.jp/contests/" + contest.id });
         let prefix = id.slice(0, 3);
-        if (prefix === "abc" || prefix === "arc" || prefix === "agc" || prefix === "ahc") data.categories[prefix].contests.push(id);
+        if (prefix === "abc" || prefix === "arc" || prefix === "agc" || prefix === "ahc") categories[prefix].contests.push(id);
     	else {
             try {
                 let ratedRange = contest.rate_change, rightRangeStr = ratedRange.split("~")[1];
                 if (rightRangeStr == " " || ratedRange == "All") rightRangeStr = "9999";
-                if (!rightRangeStr) data.categories.others.contests.push(id);
+                if (!rightRangeStr) categories.others.contests.push(id);
                 let rightRange = parseInt(rightRangeStr);
-                if (rightRange < 2000) data.categories.abc_like.contests.push(id);
-                else if (rightRange < 2800) data.categories.arc_like.contests.push(id);
-                else data.categories.agc_like.contests.push(id);
+                if (rightRange < 2000) categories.abc_like.contests.push(id);
+                else if (rightRange < 2800) categories.arc_like.contests.push(id);
+                else categories.agc_like.contests.push(id);
 	        } catch {
                  console.log("Failed to filter " + id + " failed.");
-                 data.categories.others.contests.push(id);
+                 categories.others.contests.push(id);
 	        }
 	    }
     }
+    for (const id in categories) data.categories.push(categories[id]);
     return data;
 }
 
-async function resolveProblems(): Promise<ProblemSet> {
-    let problems = {} as ProblemSet;
+async function resolveProblems(): Promise<Problem[]> {
+    let problems = [] as Problem[];
     const data = await getObject("https://kenkoooo.com/atcoder/resources/problems.json") as NativeProblem[];
     for (const i in data) {
         const problem = data[i];
-        problems[problem.id] = { index: problem.problem_index, title: problem.name, link: null, difficulty: null };
+        problems.push({ id: problem.id, title: problem.name, link: null, difficulty: null });
     }
-    return problems;
+    return problems.reverse();
 }
 
 function resolveDifficulty(difficulty: number): Difficulty {
@@ -100,29 +104,32 @@ function resolveDifficulty(difficulty: number): Difficulty {
         value: difficulty
     };
 }
-async function resolveDifficulties(problems: ProblemSet): Promise<ProblemSet> {
+async function resolveDifficulties(problems: Problem[]): Promise<Problem[]> {
     const data = await getObject("https://kenkoooo.com/atcoder/resources/problem-models.json") as NativeDifficultySet;
-    for (const i in data) {
-        const problem = data[i];
-        if (problems[i] && problem.difficulty) {
-            problems[i].difficulty = resolveDifficulty(problem.difficulty);
-        }
+    for (const i in problems) {
+        const problem = data[problems[i].id];
+        if (problem) problems[i].difficulty = resolveDifficulty(problem.difficulty);
     }
     return problems;
 }
 
-async function mergeData(data: Data, problems: ProblemSet): Promise<Data> {
+async function mergeData(data: Data, problems: Problem[]): Promise<Data> {
     const contestProblem = await getObject("https://kenkoooo.com/atcoder/resources/contest-problem.json") as NativeContestProblem[];
+    const contestProblemSet = {} as {[id: string]: ContestProblem[]};
+    const problemSet = new Set<string>();
+    for (const problem of problems) problemSet.add(problem.id);
     for (const i in contestProblem) {
         const cur = contestProblem[i];
-        let problem = problems[cur.problem_id];
-        if (problem == undefined) {
+        if (!problemSet.has(cur.problem_id)) {
             console.log("Problem '" + cur.problem_id + "' belongs to contest '" + cur.contest_id + "' not found.");
             continue;
         }
-        data.contests[cur.contest_id].problems[cur.problem_id] = Object.assign({}, problem);
-        data.contests[cur.contest_id].problems[cur.problem_id].index = cur.problem_index;
-        data.contests[cur.contest_id].problems[cur.problem_id].link = "https://atcoder.jp/contests/" + cur.contest_id + "/tasks/" + cur.problem_id;
+        if (!contestProblemSet[cur.contest_id]) contestProblemSet[cur.contest_id] = [];
+        contestProblemSet[cur.contest_id].push({id: cur.problem_id, index: cur.problem_index});
+    }
+    for (const i in data.contests) {
+        const contest = data.contests[i];
+        if (contestProblemSet[contest.id]) data.contests[i].problems = contestProblemSet[contest.id];
     }
     return data;
 }
