@@ -34,7 +34,8 @@ type Category = {
 
 type Data = {
     categories: Category[],
-    contests: Contest[]
+    contests: Contest[],
+    problems: Problem[]
 };
 
 type Modules = {

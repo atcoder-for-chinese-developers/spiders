@@ -131,6 +131,7 @@ async function mergeData(data: Data, problems: Problem[]): Promise<Data> {
         const contest = data.contests[i];
         if (contestProblemSet[contest.id]) data.contests[i].problems = contestProblemSet[contest.id];
     }
+    data.problems = problems;
     return data;
 }
 
