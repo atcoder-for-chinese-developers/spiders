@@ -6,38 +6,36 @@ type Difficulty = {
     value: number
 };
 
+type ContestProblem = {
+    id: string,
+    index: string
+};
 type Problem = {
-    index: string,
+    id: string,
     title: string,
-    link: string | null,
-    difficulty: Difficulty | null
-};
-type ProblemSet = {
-    [id: string]: Problem
-};
+    difficulty: Difficulty | null,
+    link: string | null
+}
 
 type Contest = {
+    id: string,
     title: string,
     link: string | null,
-    problems: ProblemSet
-};
-type ContestSet = {
-    [id: string]: Contest
+    problems: ContestProblem[];
 };
 
 type Category = {
+    id: string,
     title: string,
     color: string,
     contests: string[],
     indexes?: {[name: string]: string}
 };
-type CategorySet = {
-    [id: string]: Category
-};
 
 type Data = {
-    categories: CategorySet,
-    contests: ContestSet
+    categories: Category[],
+    contests: Contest[],
+    problems: Problem[]
 };
 
 type Modules = {
