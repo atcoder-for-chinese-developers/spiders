@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import { CatchClause } from "typescript";
+import { NativeContest, NativeContestProblem, NativeDifficultySet, NativeProblem } from "./types.ts";
 
 async function getObject(url: string) {
     const response = await fetch(url);

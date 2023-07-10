@@ -1,4 +1,4 @@
-type NativeContest = {
+export type NativeContest = {
     id: string,
     start_epoch_second: number,
     duration_second: number,
@@ -6,7 +6,7 @@ type NativeContest = {
     rate_change: string
 };
 
-type NativeProblem = {
+export type NativeProblem = {
     id: string,
     contest_id: string,
     problem_index: string,
@@ -14,7 +14,7 @@ type NativeProblem = {
     title: string
 };
 
-type NativeDifficulty = {
+export type NativeDifficulty = {
     slope: number,
     intercept: number,
     variance: number,
@@ -24,11 +24,11 @@ type NativeDifficulty = {
     irt_users: number,
     is_experimental: boolean
 };
-type NativeDifficultySet = {
+export type NativeDifficultySet = {
     [id: string]: NativeDifficulty
 };
 
-type NativeContestProblem = {
+export type NativeContestProblem = {
     contest_id: string,
     problem_id: string,
     problem_index: string
